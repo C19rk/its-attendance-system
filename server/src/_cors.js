@@ -1,6 +1,5 @@
-export default function enableCors(req, res) {
-  const allowedOrigin =
-    "https://its-atttendance-system-yeur-itldfikhh-c19rks-projects.vercel.app";
+export default function enableCors(req, res, next) {
+  const allowedOrigin = "https://its-atttendance-system-yeur.vercel.app";
 
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -9,10 +8,10 @@ export default function enableCors(req, res) {
     "Content-Type, Authorization, X-Requested-With"
   );
 
-  // Handle preflight
   if (req.method === "OPTIONS") {
     res.status(200).end();
-    return true;
+    return;
   }
-  return false;
+
+  next();
 }
