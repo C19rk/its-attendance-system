@@ -1,17 +1,18 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import errorHandling from "./src/middlewares/errorHandler.js";
 import authRoutes from "./src/routes/auth.js";
 import leaveRoutes from "./src/routes/leaveRoutes.js";
 import attendanceRoutes from "./src/routes/attendanceRoutes.js";
 import timeAdjustmentRoutes from "./src/routes/timeAdjustmentRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
-import path from "path";
-import { fileURLToPath } from "url";
 import { checkLeaves } from "./src/cron/leaveChecker.js";
 import { cleanSched } from "./src/cron/cleanExpiredSched.js";
 import { bucket } from "./src/config/firebase.js";
+import pool from "./src/db.js";
 
 dotenv.config();
 
@@ -23,12 +24,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // middlewares
-app.use(
-  cors({
-    origin: [process.env.FRONTEND_URL, "http://localhost:5000"],
-    credentials: true,
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -38,6 +34,16 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 //routes
 app.get("/", (req, res) => {
   res.send("API is running...");
+});
+
+app.get("/api/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({ message: "Database connected!", time: result.rows[0] });
+  } catch (err) {
+    console.error("DB Error:", err);
+    res.status(500).json({ error: "Database connection failed" });
+  }
 });
 
 app.get("/api/ping", (req, res) => {
