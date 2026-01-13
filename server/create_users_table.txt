@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- Reset Password add in its-attttendance-system database using Query Tool.
+ALTER TABLE users
+ADD COLUMN reset_token TEXT,
+ADD COLUMN reset_token_expiry TIMESTAMP;

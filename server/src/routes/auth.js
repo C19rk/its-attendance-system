@@ -1,73 +1,84 @@
 import express from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import pool from "../db.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+// Controllers
+import {
+  signUp,
+  login,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+  validateResetToken,
+  getAllUsers,
+  getAllAdminUsers,
+  getAllUsersWithRoles,
+  getMe,
+  updateUserInfo,
+  verifyOtpController,
+} from "../controllers/authController.js";
+// Middlewares
+import verifyToken from "../middlewares/verifyToken.js";
+import {
+  validateSignUp,
+  validateLogin,
+  validateResetPassword,
+  validateChangePassword,
+  validateUpdateUserInfo,
+} from "../middlewares/validateUser.js";
+
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
-//User sign-up
-router.post("/sign-up", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
+// Multer (Must always be on TOP HERE!!!)
+const uploadsDir = path.join(process.cwd(), "uploads");
 
-    const existing = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    if (existing.rows.length > 0)
-      return res.status(400).json({ message: "User already exists" });
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-    const hashed = await bcrypt.hash(password, 10);
-
-    await pool.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
-      [username, email, hashed]
-    );
-
-    res.json({ message: "User has been successfully created!" });
-  } catch (err) {
-    console.error("SIGN-UP ERROR FULL:", err);
-    res.status(500).json({ message: "Server Error" });
-  }
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    cb(null, name + ext);
+  },
 });
 
-//User login
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    if (user.rows.length === 0)
-      return res.status(400).json({ message: "User does not exist" });
-
-    const valid = await bcrypt.compare(password, user.rows[0].password);
-    if (!valid) return res.status(400).json({ message: "Incorrect password" });
-
-    const token = jwt.sign({ id: user.rows[0].id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.json({ token });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: "Server Error" });
-  }
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB limit to allow higher res pics
+  },
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/"))
+      return cb(new Error("Only image files are allowed!"), false);
+    cb(null, true);
+  },
 });
 
-//Page protection middleware
-export const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token)
-    return res.status(401).json({ message: "No token, authorization denied" });
+router.post("/sign-up", validateSignUp, signUp);
+router.post("/login", validateLogin, login);
+router.post("/forgot-password", forgotPassword);
+router.post("/verify-otp", verifyOtpController);
+router.post("/reset-password", validateResetPassword, resetPassword);
+router.get("/validate-reset-token/:token", validateResetToken);
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(403).json({ message: "Token is not valid" });
-  }
-};
+// ------------------- Get Logged in user data -------------------
+router.get("/me", verifyToken, getMe);
+
+// ------------------- Change password -------------------
+router.post(
+  "/change-password",
+  validateChangePassword,
+  verifyToken,
+  changePassword
+);
+
+router.put("/update", validateUpdateUserInfo, verifyToken, updateUserInfo);
+router.get("/users", verifyToken, getAllUsers);
+router.get("/admins", verifyToken, getAllAdminUsers);
+router.get("/all-users", verifyToken, getAllUsersWithRoles);
 
 export default router;

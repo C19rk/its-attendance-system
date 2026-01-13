@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                 String    @id @default(uuid())
+  username           String    @unique
+  email              String    @unique
+  password           String
+  profilePic         String?
+  role               Role      @default(USER)
+  position           String?
+  department         String?
+  supervisor         String?
+  useCustomSchedule  Boolean   @default(false)
+  created_at         DateTime  @default(now())
+  reset_token        String?
+  reset_token_expiry DateTime?
+  onLeave            Boolean   @default(false) 
+  totalOJTHours      Float?     @default(0)
+  remainingWorkHours Float?    @default(0)
+  resignedAt  DateTime? 
+  leaves      Leave[]
+  attendance  Attendance[]
+  timeAdjustments TimeAdjustment[]
+  schedules   UserSchedule[]
+  otp_hash          String?
+  otp_expiry        DateTime?
+  reset_uuid        String?
+  reset_uuid_expiry DateTime?    
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LeaveType {
+  VACATION
+  HOLIDAY
+  SICK
+  OFFSET
+}
+
+enum LeaveCoverage {
+  FULL_DAY
+  HALF_DAY
+} 
+
+model Leave {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  startDate DateTime
+  endDate   DateTime
+  leaveType LeaveType
+  status    LeaveStatus @default(PENDING)
+  reason    String?
+  attachment String? 
+  coverage   LeaveCoverage @default(FULL_DAY)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  attendance Attendance[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  TARDY
+  ABSENT
+  ON_LEAVE
+}
+
+model Attendance {
+  id      String             @id @default(uuid())
+  userId  String
+  user    User             @relation(fields: [userId], references: [id])
+  date    DateTime
+  timeIn  DateTime?
+  lunchOut DateTime?
+  lunchIn DateTime?
+  timeOut DateTime?
+  status  AttendanceStatus @default(PRESENT)
+
+  tardinessMinutes        Int   @default(0)
+  lunchTardinessMinutes   Int   @default(0)
+  straightWorkHours Float?
+  totalWorkHours Float? 
+
+  leaveId String?
+  leave   Leave?           @relation(fields: [leaveId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@index([status])
+}
+
+model TimeAdjustment {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  type       String
+  details    String
+  attachment String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  shiftDate  DateTime?
+  startTime  String?
+  endTime    String?
+}
+
+model UserSchedule {
+  id        String   @id @default(uuid())
+  userId    String
+  weekday   Int
+  startTime String
+  endTime   String
+
+  scheduleDate DateTime? @db.Date
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, weekday, scheduleDate])
+}

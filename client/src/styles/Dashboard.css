@@ -1,0 +1,166 @@
+.dashboard__containerone {
+  display: flex;
+  background-color: #eeeeee;
+  margin: 50px auto 0 auto; 
+  height: auto;
+  gap: 300px;
+  flex-wrap: wrap;
+  justify-content: center; 
+  padding: 20px;
+  box-sizing: border-box;
+  max-width: 1200px; 
+}
+
+.dashboard__container__two {
+  display: flex;
+  margin: 50px auto 0 auto; 
+  height: auto;
+  gap: 300px;
+  flex-wrap: wrap;
+  justify-content: center; 
+
+  box-sizing: border-box;
+  max-width: 1200px; 
+}
+
+
+.dashboard__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+  width: 400px;
+  box-sizing: border-box;
+}
+
+.dashboard__left__two {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+  width: 500px;
+  box-sizing: border-box;
+}
+
+/* Right section */
+.dashboard__right {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.dashboard__right__two {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .dashboard__containerone {
+    gap: 20px;
+  }
+}
+
+/* Medium devices (tablets) */
+@media (max-width: 1200px) {
+  .dashboard__containerone {
+    flex-direction: column;
+    gap: 20px;
+    align-items: stretch; /* children take full width */
+    padding: 10px;
+  }
+
+  .dashboard__left,
+  .dashboard__right {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .dashboard__left {
+    justify-content: center; /* center items horizontally */
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .dashboard__right {
+    justify-content: flex-start; /* align right section to left below left section */
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 1200px) {
+  .dashboard__container__two {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center; 
+    padding: 10px;
+  }
+
+  .dashboard__left__two,
+  .dashboard__right__two {
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+  }
+}
+
+.dashboard__left .clock {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard__left .TimeInOut {
+  flex: 1;
+}
+
+/* Buttons */
+.return-button,
+.signout-button {
+  width: 300px;
+  height: 40px;
+  margin-top: 20px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.return-button {
+  background-color: #1a5dac;
+}
+
+.return-button:hover {
+  background-color: #154a8a;
+  transform: scale(1.01);
+}
+
+.return-button:hover:active {
+  transform: scale(0.98);
+}
+
+.signout-button {
+  background-color: #ff0000;
+}
+
+.signout-button:hover {
+  background-color: #cc0000;
+  transform: scale(1.01);
+}
+
+.signout-button:hover:active {
+  transform: scale(0.98);
+}
