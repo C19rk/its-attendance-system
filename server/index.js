@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 // middlewares
 app.use(cors());
-app.options("/*", cors());
+app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
