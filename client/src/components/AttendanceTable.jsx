@@ -178,6 +178,7 @@ export default function AttendanceTable({
     options,
     timeOptions,
     role,
+    setLoading,
   ]);
 
   const { exportPDF } = useExportPDF();
