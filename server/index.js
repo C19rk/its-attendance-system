@@ -9,7 +9,7 @@ import leaveRoutes from "./src/routes/leaveRoutes.js";
 import attendanceRoutes from "./src/routes/attendanceRoutes.js";
 import timeAdjustmentRoutes from "./src/routes/timeAdjustmentRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
-import { checkLeaves } from "./src/cron/leaveChecker.js";
+import "./src/cron/leaveChecker.js";
 import { cleanSched } from "./src/cron/cleanExpiredSched.js";
 import { bucket } from "./src/config/firebase.js";
 import pool from "./src/db.js";

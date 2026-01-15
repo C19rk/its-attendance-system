@@ -1,8 +1,9 @@
+import cron from "node-cron";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const checkLeaves = async () => {
+cron.schedule("0 0 * * *", async () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -23,6 +24,6 @@ export const checkLeaves = async () => {
       data: { onLeave: Boolean(activeLeave) },
     });
   }
+});
 
-  return users.length;
-};
+export default {};
