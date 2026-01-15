@@ -1,11 +1,19 @@
 import { PrismaClient, LeaveStatus, LeaveCoverage } from "@prisma/client";
 import multer from "multer";
-import { uploadToFirebase } from "../utils/firebase/uploadToFirebase.js";
+import path from "path";
 
 const prisma = new PrismaClient();
 
 // Multer storage setup
-export const upload = multer({ storage: multer.memoryStorage() });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+export const upload = multer({ storage });
 
 // Update user's onLeave status based on today's date
 const normalizeDate = (d) => {
@@ -70,28 +78,16 @@ export const createLeave = async (req, res) => {
 
     const coverageUpper = coverage?.toUpperCase();
     if (!Object.values(LeaveCoverage).includes(coverageUpper)) {
-      return res.status(400).json({ message: "Invalid coverage type" });
+      return res.status(400).json({ message: "Invalid coverage type. Use FULL_DAY or HALF_DAY" });
     }
 
-    const attachmentUrl = req.file
-      ? await uploadToFirebase(req.file, "leave-attachments")
-      : null;
+    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     const leave = await prisma.leave.create({
-      data: {
-        userId,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        leaveType,
-        coverage: coverageUpper,
-        reason,
-        attachment: attachmentUrl,
-      },
+      data: { userId, startDate: new Date(startDate), endDate: new Date(endDate), leaveType, coverage: coverageUpper, reason, attachment: filePath },
     });
 
     res.status(201).json(leave);
-    console.log("FILE:", req.file);
-    console.log("BODY:", req.body);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating leave" });
