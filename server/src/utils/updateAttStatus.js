@@ -15,15 +15,7 @@ export const updateAttStatus = async (
 
   const date = new Date(attendance.date);
   const schedule = await getWorkSchedule(attendance.userId, date);
-  const workStart = schedule
-  ? schedule.start
-  : new Date(Date.UTC(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate(),
-      9, 0, 0
-    ));
-
+  const workStart = schedule ? schedule.start : new Date(date.setHours(9, 0, 0, 0));
 
   // Use new values if provided, otherwise keep old ones
   const newTimeIn = timeIn ? new Date(timeIn) : attendance.timeIn;
