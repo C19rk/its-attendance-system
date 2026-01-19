@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Loader from "../components/Spinner/Loader";
 import AttendanceTable from "../components/AttendanceTable";
 import DashboardLayout from "../components/DashboardLayout";
 import TimeAdjustmentModal from "../components/TimeAdjustmentModal";
@@ -10,7 +9,6 @@ import "../styles/TimeAdjustmentModal.css";
 
 function Timesheet() {
   const user = JSON.parse(localStorage.getItem("user"));
-  const [loading, setLoading] = useState(true);
   const [reload, setReload] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -31,7 +29,6 @@ function Timesheet() {
 
   useEffect(() => {
     fetchRequests();
-    setLoading(false);
   }, []);
 
   // Date range
@@ -59,50 +56,49 @@ function Timesheet() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="dashboard-main" style={{ position: "relative" }}>
-        {!isAdmin && (
-          <div className="time-adjustment-buttons">
-            <div className="time-adjustment-container">
-              <button
-                className="time-adjustment-box circle"
-                onClick={() => setIsModalOpen(true)}
+      <DashboardLayout>
+        <div className="dashboard-main" style={{ position: "relative" }}>
+          {!isAdmin && (
+            <div className="time-adjustment-buttons">
+              <div className="time-adjustment-container">
+                <button
+                  className="time-adjustment-box circle"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <span className="material-symbols-outlined">add</span>
+                </button>
+              </div>
+
+              <a
+                href="/my-requests"
+                className="time-adjustment-box"
+                style={{ textDecoration: "none", textAlign: "center" }}
               >
-                <span className="material-symbols-outlined">add</span>
-              </button>
+                My Requests
+              </a>
+            </div>
+          )}
+
+          <TimeAdjustmentModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+
+          <div className="daterange_container">
+            <button className="daterange_btn" onClick={handlePrevMonth}>
+              &larr;
+            </button>
+
+            <div className="daterange_bar">
+              <span className="daterange_bar-hide-title">Date Range:</span>{" "}
+              {firstDay.toLocaleDateString()} - {lastDay.toLocaleDateString()}
             </div>
 
-            <a
-              href="/my-requests"
-              className="time-adjustment-box"
-              style={{ textDecoration: "none", textAlign: "center" }}
-            >
-              My Requests
-            </a>
-          </div>
-        )}
-
-        <TimeAdjustmentModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-
-        <div className="daterange_container">
-          <button className="daterange_btn" onClick={handlePrevMonth}>
-            &larr;
-          </button>
-
-          <div className="daterange_bar">
-            <span className="daterange_bar-hide-title">Date Range:</span>{" "}
-            {firstDay.toLocaleDateString()} - {lastDay.toLocaleDateString()}
+            <button className="daterange_btn" onClick={handleNextMonth}>
+              &rarr;
+            </button>
           </div>
 
-          <button className="daterange_btn" onClick={handleNextMonth}>
-            &rarr;
-          </button>
-        </div>
-
-        <Loader loading={loading}>
           <AttendanceTable
             userId={user.id}
             userEmail={user.email}
@@ -110,9 +106,8 @@ function Timesheet() {
             lastDay={lastDay}
             reload={reload}
           />
-        </Loader>
-      </div>
-    </DashboardLayout>
+        </div>
+      </DashboardLayout>
   );
 }
 
