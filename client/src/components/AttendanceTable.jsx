@@ -104,7 +104,7 @@ export default function AttendanceTable({
           );
         }
 
-        // --- CUSTOM RANGE FILTER ---
+        // Custom Range Filter
         if (filterType === "Custom") {
           if (customStart && customEnd) {
             const start = new Date(customStart + "T00:00:00");
