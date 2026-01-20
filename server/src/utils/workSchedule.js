@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { deleteExpiredSched } from "./deleteExpiredSched.js";
+import { getUTCDay } from "./dateUTC.js";
 
 const prisma = new PrismaClient();
 
 export const getWorkSchedule = async (userId, date = new Date()) => {
-  const today = new Date(date);
-  today.setHours(0, 0, 0, 0);
+  const today = getUTCDay(date);
 
   const day = today.getDay();
   if (day === 0 || day === 6) return null;
