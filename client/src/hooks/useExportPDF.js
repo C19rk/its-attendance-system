@@ -31,6 +31,9 @@ export default function useExportPDF() {
     const department = matchedUser?.department ?? "—";
     const position = matchedUser?.position ?? "—";
     const supervisor = matchedUser?.supervisor ?? "—";
+    const manager = matchedUser?.manager ?? "—";
+
+    const supervisorManager = `${supervisor} / ${manager}`;
 
     let remainingHours = 0;
     if (matchedUser?.id) {
@@ -125,31 +128,31 @@ export default function useExportPDF() {
     };
 
     autoTable(doc, {
-      startY: 10,
-      theme: "grid",
-      tableWidth: 270,
-      body: [
-        [
-          { content: "Intern Email:", styles: { fontStyle: "bold" } },
-          { content: internEmail },
-          { content: "Department:", styles: { fontStyle: "bold" } },
-          { content: department },
-        ],
-        [
-          { content: "Position:", styles: { fontStyle: "bold" } },
-          { content: position },
-          { content: "Supervisor:", styles: { fontStyle: "bold" } },
-          { content: supervisor },
-        ],
+    startY: 10,
+    theme: "grid",
+    tableWidth: 270,
+    body: [
+      [
+        { content: "Intern Email:", styles: { fontStyle: "bold" } },
+        { content: internEmail },
+        { content: "Department:", styles: { fontStyle: "bold" } },
+        { content: department },
       ],
-      styles: { textColor: 0, fontSize: 8, cellPadding: 3 },
-      columnStyles: {
-        0: { cellWidth: 45 },
-        1: { cellWidth: 90 },
-        2: { cellWidth: 45 },
-        3: { cellWidth: 90 },
-      },
-    });
+      [
+        { content: "Position:", styles: { fontStyle: "bold" } },
+        { content: position },
+        { content: "Supervisor / Manager:", styles: { fontStyle: "bold" } },
+        { content: supervisorManager },
+      ],
+    ],
+    styles: { textColor: 0, fontSize: 8, cellPadding: 3 },
+    columnStyles: {
+      0: { cellWidth: 45 },
+      1: { cellWidth: 90 },
+      2: { cellWidth: 45 },
+      3: { cellWidth: 90 },
+    },
+  });
 
     let currentY = doc.lastAutoTable.finalY + 10;
 
@@ -205,8 +208,8 @@ export default function useExportPDF() {
       preparedByName = meta.preparedBy?.username ?? "—";
       preparedByPosition = meta.preparedBy?.position ?? "—";
 
-      approvedByName = meta.approvedBy?.username ?? "—";
-      approvedByPosition = meta.approvedBy?.position ?? "—";
+      approvedByName = supervisor;
+      approvedByPosition = "Supervisor";
     } catch (err) {
       console.error("Failed to load timesheet metadata", err);
     }
