@@ -4,6 +4,7 @@ import { getWorkSchedule } from "../utils/workSchedule.js";
 import { countWorkDays } from "../utils/countWorkDays.js";
 import { updateAttStatus } from "../utils/updateAttStatus.js";
 import { recalculateHours } from "../utils/hoursOJT/recalculateHours.js";
+import { getUTCDay } from "../utils/dateUTC.js";
 
 const prisma = new PrismaClient();
 
@@ -26,8 +27,7 @@ export const timeIn = async (req, res) => {
 
     const userId = req.user.id;
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getUTCDay();
 
     const onLeaveToday = await prisma.leave.findFirst({
       where: {
@@ -97,8 +97,7 @@ export const lunchOut = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getUTCDay();
 
     const attendance = await prisma.attendance.findUnique({
       where: { userId_date: { userId, date: today } },
@@ -141,8 +140,7 @@ export const lunchIn = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getUTCDay();
 
     const attendance = await prisma.attendance.findUnique({
       where: { userId_date: { userId, date: today } },
@@ -203,8 +201,7 @@ export const lunchIn = async (req, res) => {
 export const timeOut = async (req, res) => {
   try {
     const userId = req.user.id;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getUTCDay();
 
     const attendance = await prisma.attendance.findUnique({
       where: { userId_date: { userId, date: today } },
@@ -345,8 +342,7 @@ export const deleteAttendance = async (req, res) => {
 
 export const getLoginStatus = async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getUTCDay();
 
     const users = await prisma.user.findMany({
       where: { role: "USER" },

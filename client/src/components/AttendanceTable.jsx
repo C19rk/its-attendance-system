@@ -9,11 +9,12 @@ import FilterAttendanceActionsMobile from "./FilterAttendanceActionsMobile";
 import { formatHoursToHHMM } from "../hooks/formatHours";
 import usePagination from "../hooks/pagination";
 import Pagination from "./Pagination";
+import Loader from "./Spinner/Loader";
 import "../styles/AttendanceTable.css";
 
 export default function AttendanceTable({
   userId,
-  userEmail,
+  username,
   firstDay,
   lastDay,
 }) {
@@ -23,6 +24,7 @@ export default function AttendanceTable({
   const [records, setRecords] = useState([]);
   const [editingRecord, setEditingRecord] = useState(null);
   const [reloadCounter, setReloadCounter] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const isDesktop = useIsDesktop();
 
@@ -73,6 +75,9 @@ export default function AttendanceTable({
   useEffect(() => {
     const fetchAttendance = async () => {
       if (!userId) return;
+
+      setLoading(true);
+
       try {
         let res;
         if (role === "ADMIN") res = await getAllAttendance();
@@ -99,7 +104,7 @@ export default function AttendanceTable({
           );
         }
 
-        // --- CUSTOM RANGE FILTER ---
+        // Custom Range Filter
         if (filterType === "Custom") {
           if (customStart && customEnd) {
             const start = new Date(customStart + "T00:00:00");
@@ -138,13 +143,13 @@ export default function AttendanceTable({
             rawLunchOut: r.lunchOut,
             rawLunchIn: r.lunchIn,
 
-            Intern: role === "ADMIN" ? r.user.email : userEmail,
+            Intern: role === "ADMIN" ? r.user.username : user.username,
             Status: r.status,
             Date: new Date(r.date).toLocaleDateString("en-US", options),
-            "Time In": ti ? ti.toLocaleTimeString("en-US", timeOptions) : "-",
-            "Lunch Out": lo ? lo.toLocaleTimeString("en-US", timeOptions) : "-",
-            "Lunch In": li ? li.toLocaleTimeString("en-US", timeOptions) : "-",
-            "Time Out": to ? to.toLocaleTimeString("en-US", timeOptions) : "-",
+            "Time In": ti ? ti.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
+            "Lunch Out": lo ? lo.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
+            "Lunch In": li ? li.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
+            "Time Out": to ? to.toLocaleTimeString("en-US", {...timeOptions,timeZone: "Asia/Manila",}) : "-",
             "Lunch Tardy": lunchTardyMinutes > 0 ? `${lunchTardyMinutes} mins` : "-",
             Tardiness: tardyMinutes > 0 ? `${tardyMinutes} mins` : "-",
             DAYS: presentDays,
@@ -157,6 +162,8 @@ export default function AttendanceTable({
       } catch (err) {
         console.error(err);
         setRecords([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -169,7 +176,7 @@ export default function AttendanceTable({
     filterWeek,
     customStart,
     customEnd,
-    userEmail,
+    user.username,
     reloadCounter,
     options,
     timeOptions,
@@ -218,7 +225,7 @@ export default function AttendanceTable({
           onFilterChange={setFilters}
         />
       )}
-      
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -227,69 +234,82 @@ export default function AttendanceTable({
         onGoTo={goToPage}
       />
 
-      {records.length === 0 ? (
-        <p className="attendance_message">
-          No attendance for this{" "}
-          {filterType === "Month" ? "month" : `week ${filterWeek}`}
-        </p>
-      ) : (
-        <div className="attendance_container">
-          <table className="attendance_tbl">
-            <thead>
-              <tr>
-                {Object.keys(records[0])
-                  .filter(
-                    (col) =>
-                      !["rawDate", "rawTimeIn", "rawTimeOut", "rawLunchOut", "rawLunchIn", "id"].includes(
-                        col
-                      )
-                  )
-                  .map((col) => (
-                    <th key={col}>{col}</th>
-                  ))}
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((r, i) => (
-                <tr key={i}>
-                  {Object.keys(r)
+      <Loader loading={loading}>
+        {!loading && records.length === 0 ? (
+          <p className="attendance_message">
+            No attendance for this{" "}
+            {filterType === "Month" ? "month" : `week ${filterWeek}`}
+          </p>
+        ) : !loading ? (
+          <div className="attendance_container">
+            <table className="attendance_tbl">
+              <thead>
+                <tr>
+                  {Object.keys(records[0])
                     .filter(
                       (col) =>
-                        !["rawDate", "rawTimeIn", "rawTimeOut", "rawLunchOut", "rawLunchIn", "id"].includes(
-                          col
-                        )
+                        ![
+                          "rawDate",
+                          "rawTimeIn",
+                          "rawTimeOut",
+                          "rawLunchOut",
+                          "rawLunchIn",
+                          "id",
+                        ].includes(col)
                     )
                     .map((col) => (
-                      <td key={col} data-label={col}>
-                        {col === "Status" ? (
-                          <span
-                            className={`attendance_status-${r[col]
-                              .toLowerCase()
-                              .replace("_", "-")}`}
-                          >
-                            {formatAttStatus(r[col])}
-                          </span>
-                        ) : (
-                          r[col]
-                        )}
-                      </td>
+                      <th key={col}>{col}</th>
                     ))}
-                  <td>
-                    {role === "ADMIN" && (
-                      <button
-                        className="attendance_edit_btn"
-                        onClick={() => openEditPopup(r)}
-                      >
-                        Edit
-                      </button>
-                    )}
-                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {paginatedData.map((r, i) => (
+                  <tr key={i}>
+                    {Object.keys(r)
+                      .filter(
+                        (col) =>
+                          ![
+                            "rawDate",
+                            "rawTimeIn",
+                            "rawTimeOut",
+                            "rawLunchOut",
+                            "rawLunchIn",
+                            "id",
+                          ].includes(col)
+                      )
+                      .map((col) => (
+                        <td key={col} data-label={col}>
+                          {col === "Status" ? (
+                            <span
+                              className={`attendance_status-${r[col]
+                                .toLowerCase()
+                                .replace("_", "-")}`}
+                            >
+                              {formatAttStatus(r[col])}
+                            </span>
+                          ) : (
+                            r[col]
+                          )}
+                        </td>
+                      ))}
+                    <td>
+                      {role === "ADMIN" && (
+                        <button
+                          className="attendance_edit_btn"
+                          onClick={() => openEditPopup(r)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </Loader>
+
       {editingRecord && (
         <EditAttendancePopup
           record={editingRecord}
