@@ -41,6 +41,7 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
             <button
               className="att__btn-ti"
               onClick={handleTimeIn}
+              disabled={isTimedIn || onLeave}
             >
               <span className="att__btn-content">
                 {loadingAction && <Loader loading />}
@@ -54,6 +55,7 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-lo"
             onClick={handleLunchOut}
+            disabled={!canLunchOut || onLeave}
           >
             <span className="att__btn-content">
               {lunchOutLoading && <Loader loading />}
@@ -66,6 +68,7 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-li"
             onClick={handleLunchIn}
+            disabled={!canLunchIn || onLeave}
           >
             <span className="att__btn-content">
               {lunchInLoading && <Loader loading />}
@@ -78,6 +81,7 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-to"
             onClick={handleTimeOut}
+            disabled={!isTimedIn || onLeave}
           >
             <span className="att__btn-content">
               {loadingAction && <Loader loading />}
