@@ -69,15 +69,20 @@
 .att__btn-content {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  position: relative; 
 }
 
 .att__btn-spinner {
-  display: inline-flex;
-  justify-content: center;
+  position: absolute;
+  left: 8px; 
+  top: 50%;
+  transform: translateY(-50%) scale(0.7); 
+  display: flex;
   align-items: center;
-  transform: scale(0.2); 
-  margin-right: 4px;     
+  justify-content: center;
+  pointer-events: none; 
 }
 
 .att__btn-content .loader,
@@ -85,6 +90,7 @@
   width: 12px;
   height: 12px;
 }
+
 
 .att__btn-ti {
   background-color: #54cc58;
