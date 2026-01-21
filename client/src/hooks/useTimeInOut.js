@@ -68,6 +68,7 @@ export function useTimeInOut(userId, onAttendanceChange) {
     } catch (err) {
       showToast({
         message: err.message || "Failed to time in",
+        color: "#ffffff",
         type: "error",
       });
     } finally {
