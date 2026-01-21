@@ -19,7 +19,9 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
     canLunchOut,
     canLunchIn,
     handleLunchOut,
-    handleLunchIn
+    handleLunchIn,
+    lunchOutLoading,
+    lunchInLoading,
   } = useLunchInOut(userId, reload, onAttendanceChange);
 
   if (role === "ADMIN") return null;
@@ -39,9 +41,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
             <button
               className="att__btn-ti"
               onClick={handleTimeIn}
-              disabled={isTimedIn || onLeave || loadingAction}
             >
-              {loadingAction ? <Loader loading /> : "Time In"}
+              <span className="att__btn-content">
+                {loadingAction && <Loader loading />}
+                <span>Time In</span>
+              </span>
             </button>
           )}
         </div>
@@ -50,9 +54,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-lo"
             onClick={handleLunchOut}
-            disabled={!canLunchOut || onLeave || loadingAction}
           >
-            {loadingAction ? <Loader loading /> : "Out for Lunch"}
+            <span className="att__btn-content">
+              {lunchOutLoading && <Loader loading />}
+              <span>Out for Lunch</span>
+            </span>
           </button>
         </div>
 
@@ -60,9 +66,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-li"
             onClick={handleLunchIn}
-            disabled={!canLunchIn || onLeave || loadingAction}
           >
-            {loadingAction ? <Loader loading /> : "Back from Lunch"}
+            <span className="att__btn-content">
+              {lunchInLoading && <Loader loading />}
+              <span>Back from Lunch</span>
+            </span>
           </button>
         </div>
 
@@ -70,9 +78,11 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-to"
             onClick={handleTimeOut}
-            disabled={!isTimedIn || onLeave || loadingAction}
           >
-            {loadingAction ? <Loader loading /> : "Time Out"}
+            <span className="att__btn-content">
+              {loadingAction && <Loader loading />}
+              <span>Time Out</span>
+            </span>
           </button>
         </div>
 

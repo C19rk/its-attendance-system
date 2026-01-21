@@ -66,6 +66,18 @@
   color: #fff;
 }
 
+.att__btn-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.att__btn-content .loader,
+.att__btn-content svg {
+  width: 16px;
+  height: 16px;
+}
+
 .att__btn-ti {
   background-color: #54cc58;
   border: 0.5px solid;
