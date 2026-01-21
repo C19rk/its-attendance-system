@@ -29,7 +29,6 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
   return (
     <div className="att__carousel-wrapper">
       <div className="att__carousel">
-
         <div className="att__carousel-card">
           {isInitializing ? (
             <Loader loading />
@@ -38,74 +37,65 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
               Please contact HR/Admin to update your OJT hours
             </p>
           ) : (
-            <button
-              className="att__btn-ti"
-              onClick={handleTimeIn}
-              disabled={isTimedIn || onLeave}
-            >
+            <button className="att__btn-ti" onClick={handleTimeIn} disabled={isTimedIn || onLeave}>
               <span className="att__btn-content">
                 {loadingAction && (
                   <span className="att__btn-spinner">
                     <Loader loading />
                   </span>
                 )}
-                <span>Time In</span>
+                <span className={`att__btn-text ${loadingAction ? "hidden" : ""}`}>
+                  Time In
+                </span>
               </span>
             </button>
           )}
         </div>
 
         <div className="att__carousel-card">
-          <button
-            className="att__btn-lo"
-            onClick={handleLunchOut}
-            disabled={!canLunchOut || onLeave}
-          >
+          <button className="att__btn-lo" onClick={handleLunchOut} disabled={!canLunchOut || onLeave}>
             <span className="att__btn-content">
               {lunchOutLoading && (
                 <span className="att__btn-spinner">
                   <Loader loading />
                 </span>
               )}
-              <span>Out for Lunch</span>
+              <span className={`att__btn-text ${lunchOutLoading ? "hidden" : ""}`}>
+                Out for Lunch
+              </span>
             </span>
           </button>
         </div>
 
         <div className="att__carousel-card">
-          <button
-            className="att__btn-li"
-            onClick={handleLunchIn}
-            disabled={!canLunchIn || onLeave}
-          >
+          <button className="att__btn-li" onClick={handleLunchIn} disabled={!canLunchIn || onLeave}>
             <span className="att__btn-content">
               {lunchInLoading && (
                 <span className="att__btn-spinner">
                   <Loader loading />
                 </span>
               )}
-              <span>Back from Lunch</span>
+              <span className={`att__btn-text ${lunchInLoading ? "hidden" : ""}`}>
+                Back from Lunch
+              </span>
             </span>
           </button>
         </div>
 
         <div className="att__carousel-card">
-          <button
-            className="att__btn-to"
-            onClick={handleTimeOut}
-            disabled={!isTimedIn || onLeave}
-          >
+          <button className="att__btn-to" onClick={handleTimeOut} disabled={!isTimedIn || onLeave}>
             <span className="att__btn-content">
               {loadingAction && (
                 <span className="att__btn-spinner">
                   <Loader loading />
                 </span>
               )}
-              <span>Time Out</span>
+              <span className={`att__btn-text ${loadingAction ? "hidden" : ""}`}>
+                Time Out
+              </span>
             </span>
           </button>
         </div>
-
       </div>
     </div>
   );

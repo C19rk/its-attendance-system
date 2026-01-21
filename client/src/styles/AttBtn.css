@@ -69,28 +69,20 @@
 .att__btn-content {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   position: relative;
 }
 
 .att__btn-spinner {
   position: absolute;
-  left: 100%;     
-  top: 50%;        
-  transform: translateY(-50%), scale(0.7); 
-  margin-left: 10px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;           
-  width: 5px;             
-  height: 5px;           
+  transform: scale(0.7);
 }
 
-.att__btn-content .loader,
-.att__btn-content svg {
-  width: 12px;
-  height: 12px;
+.att__btn-text.hidden {
+  visibility: hidden;
 }
 
 .att__btn-ti {
