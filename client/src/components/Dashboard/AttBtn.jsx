@@ -1,4 +1,5 @@
 import "../../styles/AttBtn.css";
+import Loader from "./Spinner/Loader"
 import { useTimeInOut } from "../../hooks/useTimeInOut";
 import { useLunchInOut } from "../../hooks/useLunchInOut";
 
@@ -9,14 +10,16 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
     handleTimeIn,
     handleTimeOut,
     onLeave,
-    totalOJTHours, 
+    isInitializing,
+    loadingAction,
+    totalOJTHours
   } = useTimeInOut(userId, onAttendanceChange);
 
   const {
     canLunchOut,
     canLunchIn,
     handleLunchOut,
-    handleLunchIn,
+    handleLunchIn
   } = useLunchInOut(userId, reload, onAttendanceChange);
 
   if (role === "ADMIN") return null;
@@ -26,17 +29,19 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
       <div className="att__carousel">
 
         <div className="att__carousel-card">
-          {totalOJTHours === null ? (
-            <div className="att__hint ">
+          {isInitializing ? (
+            <Loader loading />
+          ) : totalOJTHours === null ? (
+            <p className="att__notice">
               Please contact HR/Admin to update your OJT hours
-            </div>
+            </p>
           ) : (
             <button
               className="att__btn-ti"
               onClick={handleTimeIn}
-              disabled={isTimedIn || onLeave}
+              disabled={isTimedIn || onLeave || loadingAction}
             >
-              Time In
+              {loadingAction ? <Loader loading /> : "Time In"}
             </button>
           )}
         </div>
@@ -45,9 +50,9 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-lo"
             onClick={handleLunchOut}
-            disabled={!canLunchOut || onLeave}
+            disabled={!canLunchOut || onLeave || loadingAction}
           >
-            Out for Lunch
+            {loadingAction ? <Loader loading /> : "Out for Lunch"}
           </button>
         </div>
 
@@ -55,9 +60,9 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-li"
             onClick={handleLunchIn}
-            disabled={!canLunchIn || onLeave}
+            disabled={!canLunchIn || onLeave || loadingAction}
           >
-            Back from Lunch
+            {loadingAction ? <Loader loading /> : "Back from Lunch"}
           </button>
         </div>
 
@@ -65,9 +70,9 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           <button
             className="att__btn-to"
             onClick={handleTimeOut}
-            disabled={!isTimedIn || onLeave}
+            disabled={!isTimedIn || onLeave || loadingAction}
           >
-            Time Out
+            {loadingAction ? <Loader loading /> : "Time Out"}
           </button>
         </div>
 
