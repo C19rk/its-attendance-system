@@ -32,7 +32,7 @@ function AttBtn({ userId, onAttendanceChange, reload }) {
           {isInitializing ? (
             <Loader loading />
           ) : totalOJTHours === null ? (
-            <p className="att__notice">
+            <p className="att__hint">
               Please contact HR/Admin to update your OJT hours
             </p>
           ) : (
