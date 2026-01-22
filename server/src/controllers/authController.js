@@ -68,8 +68,8 @@ export const getMe = async (req, res) => {
       remainingWorkHours: remainingHours ?? 0,
       todaySchedule: workSchedule
         ? {
-            startTime: workSchedule.start.toTimeString().slice(0, 5),
-            endTime: workSchedule.end.toTimeString().slice(0, 5),
+            startTime: workSchedule.start.toISOStringI(),
+            endTime: workSchedule.end.toISOString(),
           }
         : null,
     });

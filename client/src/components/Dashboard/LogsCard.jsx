@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import useDateTimeOptions from "../../hooks/useDateTimeOptions";
 import { getUserAttendance } from "../../api/attendance";
 import "../../styles/LogsCard.css";
@@ -10,6 +10,32 @@ function LogsCard({ userName = "User", reload }) {
   const [logs, setLogs] = useState([]);
 
   const { timeOptions, toGMT8 } = useDateTimeOptions();
+
+  // Convert schedule times to GMT+8 for display
+  const scheduleDisplay = useMemo(() => {
+    if (!user?.todaySchedule) return "No schedule today";
+
+    const startGMT8 = toGMT8(user.todaySchedule.startTime);
+    const endGMT8 = toGMT8(user.todaySchedule.endTime);
+
+    if (!startGMT8 || !endGMT8) return "No schedule today";
+
+    const startTimeStr = startGMT8.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Manila",
+    });
+
+    const endTimeStr = endGMT8.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Manila",
+    });
+
+    return `${startTimeStr} - ${endTimeStr}`;
+  }, [user?.todaySchedule, toGMT8]);
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -37,15 +63,12 @@ function LogsCard({ userName = "User", reload }) {
     };
 
     fetchLogs();
-  }, [userId, reload, timeOptions]); 
+  }, [userId, reload, timeOptions, toGMT8]);
+
   return (
     <div className="logs-card">
       <div className="logs-card__header">
-        <span>
-          {user?.todaySchedule
-            ? `${user.todaySchedule.startTime} - ${user.todaySchedule.endTime}`
-            : "No schedule today"}
-        </span>
+        <span>{scheduleDisplay}</span>
         <span>{userName}</span>
       </div>
       <div className="logs-card__body">
