@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import "../../styles/Navbar.css";
+import "../../styles/NavbarLoader.css";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

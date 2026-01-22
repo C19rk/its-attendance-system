@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import UserDropDownMenu from "../UserDropdownMenu";
 import { NavLink } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import "../../styles/Sidebar.css";
+import "../../styles/SidebarLoader.css";
 
 export default function Sidebar() {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
