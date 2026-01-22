@@ -15,6 +15,25 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
+  const convertUTCToGMT8 = (timeStr) => {
+    if (!timeStr) return "-";
+
+    const [hours, minutes] = timeStr.split(":").map(Number);
+
+    // Create a UTC date (date part doesn't matter)
+    const utcDate = new Date(Date.UTC(1970, 0, 1, hours, minutes));
+
+    // Convert to GMT+8
+    utcDate.setHours(utcDate.getHours() + 8);
+
+    return utcDate.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
+
   useEffect(() => {
     const fetchLogs = async () => {
       if (!userId) return;
@@ -47,7 +66,9 @@ function LogsCard({ userName = "User", reload }) {
       <div className="logs-card__header">
         <span>
           {user?.todaySchedule
-            ? `${user.todaySchedule.startTime} - ${user.todaySchedule.endTime}`
+            ? `${convertUTCToGMT8(user.todaySchedule.startTime)} - ${convertUTCToGMT8(
+              user.todaySchedule.endTime
+            )}`
             : "No schedule today"}
         </span>
         <span>{userName}</span>
