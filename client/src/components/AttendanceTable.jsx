@@ -11,6 +11,7 @@ import usePagination from "../hooks/pagination";
 import Pagination from "./Pagination";
 import Loader from "./Spinner/Loader";
 import AttendanceLoader from "./AttendanceLoader";
+import { flushSync } from "react-dom";
 import "../styles/AttendanceTable.css";
 
 export default function AttendanceTable({
@@ -324,10 +325,22 @@ export default function AttendanceTable({
           record={editingRecord}
           onClose={closeEditPopup}
           onSave={async () => {
-            setSaving(true); // show saving loader
-            await reload(); // wait until data is fetched
-            setSaving(false); // hide saving loader
-            closeEditPopup(); // close popup
+            flushSync(() => setSaving(true)); // forces immediate render
+
+            try {
+              // --- real save API ---
+              // await saveAttendance(editingRecord);
+
+              // fake delay for demo
+              await new Promise((resolve) => setTimeout(resolve, 300));
+            } catch (err) {
+              console.error(err);
+            }
+
+            await fetchAttendance(); // refresh data
+
+            setSaving(false); // hide loader
+            closeEditPopup();
           }}
         />
       )}
