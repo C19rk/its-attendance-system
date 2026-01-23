@@ -159,6 +159,6 @@
 
 .attendance_popup_buttons button svg {
   color: #fff; /* spinner visible on blue button */
-  transform: scale(0.5);
+  transform: scale(0.2);
 }
 
