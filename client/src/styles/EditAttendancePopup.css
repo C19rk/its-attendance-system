@@ -147,7 +147,7 @@
 
 .attendance_popup_buttons button {
   position: relative;
-  min-height: 10px;
+  min-height: 40px;
   overflow: visible;
 }
 
@@ -159,5 +159,7 @@
 
 .attendance_popup_buttons button svg {
   color: #fff; /* spinner visible on blue button */
+  width: 7px !important;
+  height: 7px !important;
 }
 
