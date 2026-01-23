@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { updateAttendance } from "../api/attendance";
+import Loader from "../components/Spinner/Loader";
 import "../styles/EditAttendancePopup.css";
 
 export default function EditAttendancePopup({ record, onClose, onSave }) {
+  const [loading, setLoading] = useState(false);
+
   const [timeIn, setTimeIn] = useState(record["Time In"] !== "-" ? record["Time In"] : "");
   const [lunchOut, setLunchOut] = useState(record["Lunch Out"] !== "-" ? record["Lunch Out"] : "");
   const [lunchIn, setLunchIn] = useState(record["Lunch In"] !== "-" ? record["Lunch In"] : "");
   const [timeOut, setTimeOut] = useState(record["Time Out"] !== "-" ? record["Time Out"] : "");
-  const [status, setStatus] = useState(record.status || "PRESENT"); 
+  const [status, setStatus] = useState(record.status || "PRESENT");
 
   const handleSave = async () => {
     try {
+      setLoading(true);
       const date = new Date(record.rawDate);
       const formatTime = (t) => {
         if (!t) return null;
@@ -33,6 +37,8 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
     } catch (err) {
       console.error(err);
       alert("Failed to update attendance");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,17 +51,17 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         <input type="time" value={timeIn} onChange={(e) => setTimeIn(e.target.value)} />
 
         <label>Lunch Out:</label>
-          <input
-            type="time"
-            value={lunchOut}
-            onChange={(e) => setLunchOut(e.target.value)}
-          />
+        <input
+          type="time"
+          value={lunchOut}
+          onChange={(e) => setLunchOut(e.target.value)}
+        />
 
-          <label>Lunch In:</label>
-          <input
-            type="time"
-            value={lunchIn}
-            onChange={(e) => setLunchIn(e.target.value)}
+        <label>Lunch In:</label>
+        <input
+          type="time"
+          value={lunchIn}
+          onChange={(e) => setLunchIn(e.target.value)}
         />
 
         <label>Time Out:</label>
@@ -70,7 +76,9 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         </select>
 
         <div className="attendance_popup_buttons">
-          <button onClick={handleSave}>Save</button>
+          <button onClick={handleSave} disabled={loading}>    <Loader loading={loading}>
+            Save
+          </Loader></button>
           <button onClick={onClose}>Cancel</button>
         </div>
       </div>
