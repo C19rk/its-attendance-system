@@ -128,13 +128,15 @@
 
 /* Prevent spinner from resizing the Save button */
 .attendance_popup_buttons button > div {
-  padding: 0 !important;
-  margin: 0;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1;
+  padding: 0 !important;
+  margin: 0;
 }
+
 
 /* Ensure spinner stays centered and compact */
 .attendance_popup_buttons button .react-spinners {
@@ -144,10 +146,18 @@
 }
 
 .attendance_popup_buttons button {
-  min-height: 20px;
+  position: relative;
+  min-height: 40px;
 }
+
 
 .attendance_popup_buttons button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+/* Hide text but keep its space */
+.attendance_popup_buttons button:disabled span {
+  visibility: hidden;
+}
+

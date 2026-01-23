@@ -76,9 +76,11 @@ export default function EditAttendancePopup({ record, onClose, onSave }) {
         </select>
 
         <div className="attendance_popup_buttons">
-          <button onClick={handleSave} disabled={loading}>    <Loader loading={loading}>
-            Save
-          </Loader></button>
+          <button onClick={handleSave} disabled={loading}>
+            <Loader loading={loading}>
+              Save
+            </Loader>
+          </button>
           <button onClick={onClose}>Cancel</button>
         </div>
       </div>
