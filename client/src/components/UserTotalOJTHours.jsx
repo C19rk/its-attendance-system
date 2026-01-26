@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5001/api";
 
@@ -8,6 +9,7 @@ export default function UserTotalOJTHours() {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const fetchMe = async () => {
@@ -36,7 +38,10 @@ export default function UserTotalOJTHours() {
     fetchMe();
   }, []);
 
-  if (loading) return <p>Loading User's Total OJT Hours...</p>;
+  if (loading && role === null) return null;
+  if (loading && role === "ADMIN") return null;
+  if (loading && role === "USER")
+    return <p>Loading User's Total OJT Hours...</p>;
   if (error) return <p>Error: {error}</p>;
 
   if (role !== "USER") return null;
