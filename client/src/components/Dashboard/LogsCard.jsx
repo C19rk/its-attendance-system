@@ -15,6 +15,8 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
+  const formatTime = (timeStr) => timeStr || "-";
+
   useEffect(() => {
     const fetchLogs = async () => {
       if (!userId) return;
