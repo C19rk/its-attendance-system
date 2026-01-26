@@ -16,7 +16,7 @@ function ResetErrorPage() {
   return (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
       <h1 style={{ color: "red", fontWeight: "bolder" }}>
-        You are not allowed to access this page!!
+        YOU ARE NOT ALLOWED TO ACCESS THIS PAGE!!
       </h1>
       <h3 style={{ color: "red" }}>
         {token ? "Redirecting to dashboard..." : "Redirecting to home page..."}
