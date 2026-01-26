@@ -68,11 +68,12 @@ export const getMe = async (req, res) => {
       remainingWorkHours: remainingHours ?? 0,
       todaySchedule: workSchedule
         ? {
-            startTime: workSchedule.start.toTimeString().slice(0, 5),
-            endTime: workSchedule.end.toTimeString().slice(0, 5),
+            startTime: workSchedule.start.toTimeString(),
+            endTime: workSchedule.end.toTimeString(),
           }
         : null,
     });
+    console.log(startTime, endTime)
   } catch (err) {
     console.error("GET /auth/me error:", err);
     res.status(500).json({ message: "Cannot fetch user" });
