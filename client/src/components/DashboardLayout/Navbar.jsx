@@ -54,9 +54,11 @@ export default function Navbar() {
           <Link to="/timesheet">Timesheet</Link>
         </li>
 
-        <li className="navbar__item">
-          <Link to="/time-off">Time-off</Link>
-        </li>
+        {user.role === "USER" && (
+          <li className="navbar__item">
+            <Link to="/time-off">Time-off</Link>
+          </li>
+        )}
 
         {user.role === "ADMIN" && (
           <li className="navbar__item">

@@ -94,17 +94,21 @@ export default function Sidebar() {
           </NavLink>
         </li>
 
-        <li>
-          <NavLink
-            to="/time-off"
-            className={({ isActive }) => (isActive ? "active-link" : undefined)}
-          >
-            <span className="material-symbols-outlined">
-              nest_clock_farsight_analog
-            </span>
-            Time-off
-          </NavLink>
-        </li>
+        {user.role === "USER" && (
+          <li>
+            <NavLink
+              to="/time-off"
+              className={({ isActive }) =>
+                isActive ? "active-link" : undefined
+              }
+            >
+              <span className="material-symbols-outlined">
+                nest_clock_farsight_analog
+              </span>
+              Time-off
+            </NavLink>
+          </li>
+        )}
 
         {/* {user.role === "ADMIN" && (
           <li>
