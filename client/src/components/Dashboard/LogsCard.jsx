@@ -15,15 +15,7 @@ function LogsCard({ userName = "User", reload }) {
     hour12: false,
   }), []);
 
- const convertUTCToGMT8 = (timeStr) => {
-  if (!timeStr) return "-";
-
-  let [h, m] = timeStr.split(":").map(Number);
-
-  h = (h + 8) % 24;
-
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-};
+const formatTime = (timeStr) => timeStr || "-";
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -57,10 +49,10 @@ function LogsCard({ userName = "User", reload }) {
       <div className="logs-card__header">
         <span>
           {user?.todaySchedule
-            ? `${convertUTCToGMT8(user.todaySchedule.startTime)} - ${convertUTCToGMT8(
+          ? `${formatTime(user.todaySchedule.startTime)} - ${formatTime(
               user.todaySchedule.endTime
             )}`
-            : "No schedule today"}
+          : "No schedule today"}
         </span>
         <span>{userName}</span>
       </div>
