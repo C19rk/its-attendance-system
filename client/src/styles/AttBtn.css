@@ -125,7 +125,7 @@
   cursor: not-allowed;
 }
 
-.att__btn-li {
+.att__btn-lo {
   background-color: #54cc58;
   border: 0.5px solid;
   border-style: none;
@@ -136,7 +136,7 @@
   position: relative;
 }
 
-.att__btn-lo {
+.att__btn-li {
   background-color: #e86e6e;
   border: 0.5px solid;
   border-style: none;
@@ -147,20 +147,20 @@
   position: relative;
 }
 
-.att__btn-li:hover {
+.att__btn-lo:hover {
   background-color: #60e664;
 }
 
-.att__btn-lo:hover {
+.att__btn-li:hover {
   background-color: #ff7979;
 }
 
-.att__btn-li:disabled {
+.att__btn-lo:disabled {
   background-color: gray;
   cursor: not-allowed;
 }
 
-.att__btn-lo:disabled {
+.att__btn-li:disabled {
   background-color: gray;
   cursor: not-allowed;
 }

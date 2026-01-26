@@ -119,9 +119,10 @@ export default function AttendanceTable({
           const lo = r.lunchOut ? new Date(r.lunchOut) : null;
           const li = r.lunchIn ? new Date(r.lunchIn) : null;
 
-          // const workMinutes = ti && to ? Math.round((to - ti) / 1000 / 60) : null;
+          const bo = r.breakOut ? new Date(r.breakOut) : null;
+          const bi = r.breakIn ? new Date(r.breakIn) : null;
 
-          // const lunchMinutes = 60;
+          const breakTardyMinutes = r.breakTardinessMinutes || 0;
 
           const lunchTardyMinutes = r.lunchTardinessMinutes || 0;
 
@@ -143,9 +144,13 @@ export default function AttendanceTable({
             "Time In": ti ? ti.toLocaleTimeString("en-US", timeOptions) : "-",
             "Lunch Out": lo ? lo.toLocaleTimeString("en-US", timeOptions) : "-",
             "Lunch In": li ? li.toLocaleTimeString("en-US", timeOptions) : "-",
+            "Break Out": bo ? bo.toLocaleTimeString("en-US", timeOptions) : "-",
+            "Break In": bi ? bi.toLocaleTimeString("en-US", timeOptions) : "-",
             "Time Out": to ? to.toLocaleTimeString("en-US", timeOptions) : "-",
             "Lunch Tardy":
               lunchTardyMinutes > 0 ? `${lunchTardyMinutes} mins` : "-",
+            "Break Tardy":
+              breakTardyMinutes > 0 ? `${breakTardyMinutes} mins` : "-",  
             Tardiness: tardyMinutes > 0 ? `${tardyMinutes} mins` : "-",
             DAYS: presentDays,
             TOTAL:
@@ -255,6 +260,8 @@ export default function AttendanceTable({
                           "rawTimeOut",
                           "rawLunchOut",
                           "rawLunchIn",
+                          "rawBreakOut",
+                          "rawBreakIn",
                           "id",
                         ].includes(col),
                     )
