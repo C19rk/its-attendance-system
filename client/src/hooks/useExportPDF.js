@@ -5,6 +5,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { getAllUsersWithRoles, getTimesheetMeta } from "../api/auth";
 import { getUserOjtHours } from "../api/ojtHours";
+import { formatDate } from "react-calendar/dist/shared/dateFormatter.js";
 
 export default function useExportPDF() {
   const [allUsers, setAllUsers] = useState([]);
@@ -29,7 +30,7 @@ export default function useExportPDF() {
     const matchedUser = allUsers.find(
       (u) =>
         u.username?.trim().toLowerCase() ===
-        internUsername?.trim().toLowerCase()
+        internUsername?.trim().toLowerCase(),
     );
 
     const department = matchedUser?.department ?? "—";
@@ -38,7 +39,6 @@ export default function useExportPDF() {
     const manager = matchedUser?.manager ?? "—";
     const supervisorManager = `${supervisor} / ${manager}`;
 
-    let remainingHours = 0;
     let preparedByName = "—";
     let preparedByPosition = "—";
     let approvedByName = "—";
@@ -46,9 +46,6 @@ export default function useExportPDF() {
 
     if (matchedUser?.id) {
       try {
-        const ojtData = await getUserOjtHours(matchedUser.id);
-        remainingHours = ojtData.remainingWorkHours ?? 0;
-
         const meta = await getTimesheetMeta(matchedUser.id);
         preparedByName = meta.preparedBy?.username ?? "—";
         preparedByPosition = meta.preparedBy?.position ?? "—";
@@ -104,11 +101,7 @@ export default function useExportPDF() {
     totalRow[6] = "Total Hours Spent";
     totalRow[7] = `${totalHoursSpent} hrs`;
 
-    const remainingRow = Array(headers.length).fill("");
-    remainingRow[6] = "Remaining Work Hours";
-    remainingRow[7] = `${remainingHours} hrs`;
-
-    body.push(totalRow, remainingRow);
+    body.push(totalRow);
 
     const didParseCell = (data) => {
       if (
@@ -140,7 +133,7 @@ export default function useExportPDF() {
         "IT Squarehub Global Services Corp.",
         pageWidth / 2,
         pageHeight - 18,
-        { align: "center" }
+        { align: "center" },
       );
 
       doc.setFont("helvetica", "normal");
@@ -148,7 +141,7 @@ export default function useExportPDF() {
         "Unit 5, Clark Center 09, Berthaphil III, Jose Abad Santos Ave., Clark Freeport Zone, Central Luzon, Philippines",
         pageWidth / 2,
         pageHeight - 12,
-        { align: "center" }
+        { align: "center" },
       );
     };
 
@@ -187,7 +180,7 @@ export default function useExportPDF() {
       "Daily Time Records",
       doc.internal.pageSize.getWidth() / 2,
       currentY,
-      { align: "center" }
+      { align: "center" },
     );
 
     currentY += 8;
@@ -256,6 +249,14 @@ export default function useExportPDF() {
       return;
     }
 
+    const formatMonthYear = (dateStr) => {
+      if (!dateStr) return "unknown_date";
+      const parts = dateStr.split(` `);
+      const month = parts[0];
+      const year = parts[2];
+      return `${month}_${year}`;
+    };
+
     const recordsByUser = records.reduce((acc, record) => {
       const key = record.Intern;
       if (!acc[key]) acc[key] = [];
@@ -267,8 +268,9 @@ export default function useExportPDF() {
 
     if (userKeys.length === 1) {
       const key = userKeys[0];
+      const recordDate = formatMonthYear(recordsByUser[key][0]?.Date);
       const doc = await generatePDFForUser(recordsByUser[key], key);
-      doc.save(`timesheet_${key}.pdf`);
+      doc.save(`${key}_${recordDate}.pdf`);
       return;
     }
 
@@ -276,13 +278,15 @@ export default function useExportPDF() {
       const zip = new JSZip();
 
       for (const key of userKeys) {
+        const recordDate = formatMonthYear(recordsByUser[key][0]?.Date);
         const doc = await generatePDFForUser(recordsByUser[key], key);
         const pdfBlob = doc.output("blob");
-        zip.file(`timesheet_${key}.pdf`, pdfBlob);
+        zip.file(`${key}_${recordDate}.pdf`, pdfBlob);
       }
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      saveAs(zipBlob, "timesheets_export.zip");
+      const archiveLabel = formatMonthYear(records[0]?.Date);
+      saveAs(zipBlob, `ITS_Attendance_${archiveLabel}.zip`);
     } catch (err) {
       console.error("Failed to generate ZIP file", err);
       alert("Failed to export multiple PDFs.");
