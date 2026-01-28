@@ -38,9 +38,11 @@ export default function UserTotalOJTHours() {
     fetchMe();
   }, []);
 
-  if (!loading && role !== "USER") return null;
+  if (loading && (role === undefined || role === "USER")) {
+    return <p>Loading User's Total OJT Hours...</p>;
+  }
 
-  if (loading) return <p>Loading User's Total OJT Hours...</p>;
+  if (role !== "USER") return null;
 
   if (error) return <p>Error: {error}</p>;
 
