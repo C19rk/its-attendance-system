@@ -155,7 +155,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, role: user.role }, // ⬅ Add role here
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     if (user.role !== "ADMIN" && user.totalOJTHours === 0) {
@@ -388,7 +388,7 @@ export const changePassword = async (req, res) => {
     const token = jwt.sign(
       { id: updatedUser.id, role: updatedUser.role },
       process.env.JWT_SECRET || JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     return res.json({

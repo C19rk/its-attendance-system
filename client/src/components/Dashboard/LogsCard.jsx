@@ -6,16 +6,20 @@ function LogsCard({ userName = "User", reload }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
 
+  const [liveSchedule, setLiveSchedule] = useState(null);
   const [logs, setLogs] = useState([]);
 
-  const options = useMemo(() => ({
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  }), []);
+  const options = useMemo(
+    () => ({
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+    [],
+  );
 
-const formatTime = (timeStr) => timeStr || "-";
+  const formatTime = (timeStr) => timeStr || "-";
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -23,10 +27,17 @@ const formatTime = (timeStr) => timeStr || "-";
 
       try {
         const res = await getUserAttendance(userId);
+
+        if (res.todaySchedule) {
+          setLiveSchedule(res.todaySchedule);
+        } else {
+          setLiveSchedule(null);
+        }
+
         const sortedLogs = res.attendance
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .slice(0, 3)
-          .map(r => {
+          .map((r) => {
             const ti = r.timeIn ? new Date(r.timeIn) : null;
             const to = r.timeOut ? new Date(r.timeOut) : null;
 
@@ -43,17 +54,33 @@ const formatTime = (timeStr) => timeStr || "-";
     };
 
     fetchLogs();
-  }, [userId, options, reload]); // <-- add reload
+  }, [userId, options, reload]);
+
+  const renderSchedule = () => {
+    if (!liveSchedule) return "Loading schedule..."; // Change from "No schedule today"
+
+    const cleanTime = (t) => {
+      if (!t) return "-";
+      // If backend sends the string "11:00", this returns it immediately
+      if (typeof t === "string" && t.length === 5) return t;
+
+      try {
+        const d = new Date(t);
+        const h = d.getUTCHours().toString().padStart(2, "0");
+        const m = d.getUTCMinutes().toString().padStart(2, "0");
+        return `${h}:${m}`;
+      } catch (e) {
+        return "-";
+      }
+    };
+
+    return `${cleanTime(liveSchedule.startTime)} - ${cleanTime(liveSchedule.endTime)}`;
+  };
+
   return (
     <div className="logs-card">
       <div className="logs-card__header">
-        <span>
-          {user?.todaySchedule
-          ? `${formatTime(user.todaySchedule.startTime)} - ${formatTime(
-              user.todaySchedule.endTime
-            )}`
-          : "No schedule today"}
-        </span>
+        <span>{renderSchedule()}</span>
         <span>{userName}</span>
       </div>
       <div className="logs-card__body">

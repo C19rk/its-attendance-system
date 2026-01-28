@@ -11,6 +11,7 @@ import {
   updateUserInfo,
   getTimesheetMeta,
 } from "../controllers/adminController.js";
+import { setUserSchedule } from "../controllers/userScheduleController.js";
 
 const router = express.Router();
 
@@ -34,18 +35,15 @@ router.get("/all-users", authMiddleware, adminOnly, getAllUsers);
 router.get("/ojt/:userId", authMiddleware, adminOnly, getOJTHours);
 router.put("/ojt/:userId", authMiddleware, adminOnly, updateOJTHours);
 
-router.put(
-  "/update-user-info/:id",
-  authMiddleware,
-  adminOnly,
-  updateUserInfo
-);
+router.put("/update-user-info/:id", authMiddleware, adminOnly, updateUserInfo);
 
 router.get(
   "/timesheet-meta/:userId",
   authMiddleware,
   adminOnly,
-  getTimesheetMeta
+  getTimesheetMeta,
 );
+
+router.post("/set-schedule", authMiddleware, adminOnly, setUserSchedule);
 
 export default router;
