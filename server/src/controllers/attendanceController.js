@@ -57,9 +57,7 @@ export const timeIn = async (req, res) => {
     }
 
     const now = new Date();
-    const [hours, minutes] = schedule.startTime.split(":").map(Number);
-    const workStart = new Date(now);
-    workStart.setHours(hours, minutes, 0, 0);
+    const workStart = schedule.start;
 
     let status = AttendanceStatus.PRESENT;
     let tardinessMinutes = 0;
@@ -67,11 +65,11 @@ export const timeIn = async (req, res) => {
     const nowMinutes = Math.floor(now.getTime() / 60000);
     const startMinutes = Math.floor(workStart.getTime() / 60000);
 
-    if (now > workStart) {
+    if (nowMinutes > startMinutes) {
       status = AttendanceStatus.TARDY;
-      tardinessMinutes = Math.floor((now - workStart) / 60000);
+      tardinessMinutes = nowMinutes - startMinutes;
     }
-
+  
     const attendance = await prisma.attendance.create({
       data: {
         userId,
