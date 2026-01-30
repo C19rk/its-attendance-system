@@ -11,6 +11,11 @@ import {
   updateUserInfo,
   getTimesheetMeta,
 } from "../controllers/adminController.js";
+import {
+  getPendingUsers,
+  approveUser,
+  rejectUser,
+} from "../controllers/userApprovalController.js";
 import { setUserSchedule } from "../controllers/userScheduleController.js";
 
 const router = express.Router();
@@ -24,6 +29,11 @@ const adminOnly = (req, res, next) => {
 };
 
 router.get("/", authMiddleware, adminOnly, getAdmins);
+
+// Approve newly created user at signup
+router.get("/pending-users", authMiddleware, getPendingUsers);
+router.patch("/approve/:userId", authMiddleware, approveUser);
+router.delete("/reject/:userId", authMiddleware, rejectUser);
 
 router.put("/resign/:id", authMiddleware, adminOnly, resignAdmin);
 router.put("/reinstate/:id", authMiddleware, adminOnly, reinstateAdmin);

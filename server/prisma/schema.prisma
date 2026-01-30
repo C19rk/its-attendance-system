@@ -36,6 +36,7 @@ model User {
   onLeave            Boolean   @default(false) 
   totalOJTHours      Float?     @default(0)
   remainingWorkHours Float?    @default(0)
+  isApproved         Boolean   @default(false)
   resignedAt  DateTime? 
   leaves      Leave[]
   attendance  Attendance[]

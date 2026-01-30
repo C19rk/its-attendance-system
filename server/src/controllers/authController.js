@@ -52,6 +52,7 @@ export const getMe = async (req, res) => {
         role: true,
         profilePic: true,
         onLeave: true,
+        isApproved: true,
         useCustomSchedule: true,
         totalOJTHours: true,
       },
@@ -106,17 +107,21 @@ export const signUp = async (req, res) => {
       return res.status(400).json({ message: "User already exists!" });
 
     const hashed = await bcrypt.hash(password, 10);
+    const normalizedRole = role?.toUpperCase() || "USER";
+
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashed,
         role: role?.toUpperCase() || "USER", // default USER
+        isApproved: normalizedRole === "ADMIN" ? true : false,
       },
     });
 
     res.json({
-      message: "User created",
+      message:
+        "Registration successful. Please wait for administrative approval.",
       user: {
         id: newUser.id,
         username: newUser.username,
@@ -149,6 +154,13 @@ export const login = async (req, res) => {
     if (user.resignedAt)
       return res.status(403).json({ message: "This admin has been resigned." });
 
+    if (!user.isApproved && user.role !== "ADMIN") {
+      return res.status(403).json({
+        message:
+          "Account pending administrative approval. Please contact your system administrator.",
+      });
+    }
+
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(400).json({ message: "Incorrect password!" });
 
@@ -177,6 +189,7 @@ export const login = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        isApproved: user.isApproved,
         leave: user.onLeave,
         department: user.department,
         position: user.position,
