@@ -151,7 +151,7 @@ export default function useExportPDF() {
       tableWidth: 270,
       body: [
         [
-          { content: "Intern:", styles: { fontStyle: "bold" } },
+          { content: "Intern Name:", styles: { fontStyle: "bold" } },
           { content: internUsername },
           { content: "Department:", styles: { fontStyle: "bold" } },
           { content: department },
