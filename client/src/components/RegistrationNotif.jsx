@@ -23,7 +23,7 @@ function RegistrationNotif({ user }) {
               position: "top-center",
               autoClose: 5000,
               onClick: () => navigate("/approvals"),
-              style: { marginTop: "10px" },
+              style: { marginTop: "10px", cursor: "pointer" },
             },
           );
         }
