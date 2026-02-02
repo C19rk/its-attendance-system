@@ -5,6 +5,8 @@
 This project is an **Attendance Management System** web application made with Express (backend) and React (frontend).<br>
 It uses Prisma in connecting the backend to the database.<br><br><br>
 
+## If you want a **ready to go** copy and paste for **.env's and database**, open **Guide.txt** instead<br><br><br>
+
 ### Install packages on both **client** and **server**!
 
 **For client**<br><br>
@@ -14,6 +16,33 @@ npm install<br><br>
 **For server**<br><br>
 cd server<br>
 npm install<br><br><br>
+
+### After successful installation, you might get an error
+
+**client .env (place on root of client)**<br><br>
+REACT_APP_API_URL=5001<br>
+PORT=5000<br>
+GENERATE_SOURCEMAP=false<br>
+DISABLE_ESLINT_PLUGIN=true<br><br>
+
+**server .env (place on root of server)**<br><br>
+PORT=5001<br>
+PG_USER=<br>
+PG_HOST=<br>
+PG_DATABASE=<br>
+PG_PASSWORD=<br>
+PG_PORT=5432<br>
+JWT_SECRET=supersecretkey<br>
+DATABASE_URL=""<br>
+
+EMAIL_USER=@gmail.com<br>
+EMAIL_PASS=<br>
+FRONTEND_URL=<br>
+
+FIREBASE_PROJECT_ID=<br>
+FIREBASE_CLIENT_EMAIL=<br>
+FIREBASE_PRIVATE_KEY=""<br>
+FIREBASE_STORAGE_BUCKET=<br><br><br>
 
 ### For OTP to work
 
@@ -70,4 +99,4 @@ ALTER TABLE "UserSchedule"<br>
 DROP CONSTRAINT "UserSchedule_userId_fkey",<br>
 ADD CONSTRAINT "UserSchedule_userId_fkey"<br>
 FOREIGN KEY ("userId") REFERENCES "User"(id)<br>
-ON DELETE CASCADE;<br>
+ON DELETE CASCADE;<br><br><br>
