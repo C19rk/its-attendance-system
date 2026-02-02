@@ -1,5 +1,20 @@
 # Intern Attendance Management System<br>
 
+### Project Overview
+
+This project is an **Attendance Management System** web application made with Express (backend) and React (frontend).<br>
+It uses Prisma in connecting the backend to the database.<br><br><br>
+
+### Install packages on both **client** and **server**!
+
+**For client**<br><br>
+cd client<br>
+npm install<br><br>
+
+**For server**<br><br>
+cd server<br>
+npm install<br><br><br>
+
 ### For OTP to work
 
 - Create a **Gmail account**
